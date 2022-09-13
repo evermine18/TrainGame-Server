@@ -1,9 +1,9 @@
 
-def runConsole(running):
-    while running:
+def runConsole(sManager):
+    while sManager.isRunning():
         command=input()
         if command=="stop":
             print("[SERVER] Stopping server...")
-            running=False
+            sManager.stopServer()
         else:
             print("[ERROR] Invalid Command")
