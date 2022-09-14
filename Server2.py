@@ -1,6 +1,6 @@
 import socket 
 import threading
-import Core.console, Core.conection, Core.serverManager
+import Core.console, Core.connection, Core.serverManager
 
 HEADER = 2
 PORT = 5050
@@ -8,8 +8,8 @@ SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE="00"
-conections=[threading.Thread]
-sManager= Core.serverManager.ServerMagager()
+connections=[]
+sManager= Core.serverManager.ServerMagager(connections)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
@@ -40,20 +40,19 @@ def prueba():
         
 
 def start():
-    print(conections)
     server.listen()
     print(f"[SERVER] Server is listening on {SERVER}")
     sConsole = threading.Thread(target=Core.console.runConsole, args=(sManager,))
     sConsole.start()
     
     while sManager.isRunning():
+        #Accepting the connection
         conn, addr = server.accept()
-        thread = Core.conection.ClientThread(conn,addr,sManager)
-        thread.start()
-        threading.Event.set(threading.enumerate())
-        #for threa in threading.enumerate():
-        #    threa.evento.set()
-        print(f"[SERVER] Active users {threading.active_count() - 1}")
+        #Adding the new connection to a list
+        connections.append(Core.connection.ClientThread(conn,addr,sManager))
+        connections[len(connections)-1].start()
+        
+        print(f"[INFO] New user, Users Online: {threading.active_count() - 1}")
 
 
 print("[SERVER] server is starting...")
