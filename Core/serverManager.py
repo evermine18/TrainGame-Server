@@ -1,8 +1,10 @@
+import os
+
 class ServerMagager():
     
     def __init__(self,connections):
         self.Running=True
-        self.Users = {"23":[234,556]}
+        self.Users = {}
         self.UId = 0
         self.connections = connections
         print("1r ",connections)
@@ -19,6 +21,8 @@ class ServerMagager():
         self.Users.pop(id)
         for conn in self.connections:
             conn.disconnectedUser(id)
+    def updateUser(self,id,x,y):
+        self.Users[id]=[x,y]
 
     def showConnections(self):
         print(self.connections)
@@ -31,6 +35,7 @@ class ServerMagager():
 
     def stopServer(self):
         self.Running=False
+        os._exit(0)
 
     def getUsers(self):
         return self.Users
